@@ -1290,33 +1290,29 @@ PipelineResult run_pipeline(const std::string& front_path, const std::string& si
     log("[2/5] Generating 3D mesh from silhouettes...", 0);
     result.mesh = generate_mesh_from_silhouettes(front, side, back_img, log);
 
-    // Step 3: QEM Decimate (to 2x target, retopo refines further)
-    log("[3/8] QEM decimating mesh...", 0);
-    result.mesh = decimate_mesh(result.mesh, target_poly_count * 2, log);
+    // Step 3: QEM Decimate
+    log("[3/7] QEM decimating mesh...", 0);
+    result.mesh = decimate_mesh(result.mesh, target_poly_count, log);
 
-    // Step 4: Auto retopology
-    log("[4/8] Auto retopology...", 0);
-    result.mesh = retopologize(result.mesh, target_poly_count, log);
-
-    // Step 5: Smooth mesh
-    log("[5/8] Smoothing mesh...", 0);
+    // Step 4: Smooth mesh
+    log("[4/7] Smoothing mesh...", 0);
     smooth_mesh(result.mesh, 3, 0.5f);
     recompute_normals(result.mesh);
     log("Mesh smoothed", 1);
 
-    // Step 6: Flat shading
-    log("[6/8] Converting to flat shading...", 0);
+    // Step 5: Flat shading
+    log("[5/7] Converting to flat shading...", 0);
     result.mesh = make_flat_shaded(result.mesh);
     log("Flat shading: " + std::to_string(result.mesh.indices.size() / 3) + " tris", 1);
 
-    // Step 7: Per-face color baking
-    log("[7/8] Baking per-face colors...", 0);
+    // Step 6: Per-face color baking
+    log("[6/7] Baking per-face colors...", 0);
     bake_face_colors(result.mesh, front, &side, &back_img);
     quantize_colors(result.mesh, 24);
     log("24-color palette applied", 1);
 
-    // Step 8: UV unwrap
-    log("[8/8] UV unwrapping with xatlas...", 0);
+    // Step 7: UV unwrap
+    log("[7/7] UV unwrapping with xatlas...", 0);
     if (!uv_unwrap(result.mesh, log)) {
         log("UV unwrapping skipped", 2);
     }
@@ -1385,27 +1381,24 @@ PipelineResult run_pipeline_front_only(const std::string& front_path, int target
         }
     }
 
-    log("[4/9] QEM decimating mesh...", 0);
-    result.mesh = decimate_mesh(result.mesh, target_poly_count * 2, log);
+    log("[4/8] QEM decimating mesh...", 0);
+    result.mesh = decimate_mesh(result.mesh, target_poly_count, log);
 
-    log("[5/9] Auto retopology...", 0);
-    result.mesh = retopologize(result.mesh, target_poly_count, log);
-
-    log("[6/9] Smoothing mesh...", 0);
+    log("[5/8] Smoothing mesh...", 0);
     smooth_mesh(result.mesh, 3, 0.5f);
     recompute_normals(result.mesh);
     log("Mesh smoothed", 1);
 
-    log("[7/9] Converting to flat shading...", 0);
+    log("[6/8] Converting to flat shading...", 0);
     result.mesh = make_flat_shaded(result.mesh);
     log("Flat shading: " + std::to_string(result.mesh.indices.size() / 3) + " tris", 1);
 
-    log("[8/9] Baking per-face colors...", 0);
+    log("[7/8] Baking per-face colors...", 0);
     bake_face_colors(result.mesh, front);
     quantize_colors(result.mesh, 24);
     log("24-color palette applied", 1);
 
-    log("[9/9] UV unwrapping with xatlas...", 0);
+    log("[8/8] UV unwrapping with xatlas...", 0);
     if (!uv_unwrap(result.mesh, log)) {
         log("UV unwrapping skipped", 2);
     }
