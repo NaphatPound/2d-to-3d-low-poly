@@ -1,0 +1,13 @@
+{
+  "name": "2d-to-3d-low-poly",
+  "version": "0.1.0",
+  "dependencies": [
+    {
+      "name": "imgui",
+      "features": ["glfw-binding", "opengl3-binding"]
+    },
+    "glfw3",
+    "nativefiledialog-extended",
+    "stb"
+  ]
+}
